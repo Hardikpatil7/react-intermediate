@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Categories from "./Components/Categories";
@@ -13,15 +13,21 @@ const user = {
 const navigation = [
   { name: "Stores", href: "#", current: true },
 ];
-const userNavigation = [
-  
-];
+
+const userNavigation = []
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function App() {
+
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [sort, setSort] = useState('');
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [alphabetFilter, setAlphabetFilter] = useState('');
+
   return (
     <>
       <div className="min-h-full">
@@ -196,23 +202,62 @@ export default function App() {
             </>
           )}
         </Disclosure>
-
         <div className="py-10">
+        <h2 className="text-center text-4xl font-extrabold">All Stores</h2>
           <header>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">
-                Stores Gallery
-              </h1>
+              <div className="flex justify-between">
+                <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">
+                  Stores Gallery
+                </h1>
+                <select
+                  className="border border-gray-300 rounded-md p-2"
+                  value={sort}
+                  onChange={(e) => {
+                    setSort(e.target.value);
+                    setPage(1);
+                  }}
+                >
+                  <option value="">None</option>
+                  <option value="name">Name</option>
+                  <option value="featured">Featured</option>
+                  <option value="popularity">Popularity</option>
+                  <option value="cashback">Cashback</option>
+                </select>
+              </div>
             </div>
-          </header>
+          </header >
           <main className="">
-            <div className="mx-auto grid grid-cols-3 grid-flow-col max-w-7xl sm:px-6 lg:px-8">
-              <Categories className="bg-white shadow-xl min-h-4" />
-              <AllStores className="bg-white shadow-xl col-span-2 min-h-4" />
+            <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+              <div className="grid grid-cols-3 gap-4">
+                <Categories className="bg-white shadow-xl min-h-4"
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={(category) => {
+                    setSelectedCategory(category);
+                    setPage(1);
+                  }}
+                />
+                <AllStores className="bg-white shadow-xl col-span-2 min-h-4"
+                  selectedCategory={selectedCategory}
+                  sort={sort}
+                  page={page}
+                  setPage={setPage}
+                  search={search}
+                  setSearch={(value) => {
+                    setSearch(value);
+                    setPage(1);
+                  }}
+                  alphabetFilter={alphabetFilter}
+                  setAlphabetFilter={(value) => {
+                    setAlphabetFilter(value);
+                    setPage(1);
+                  }}
+                />
+              </div>
             </div>
           </main>
-        </div>
-      </div>
+        </div >
+      </div >
     </>
   );
 }
